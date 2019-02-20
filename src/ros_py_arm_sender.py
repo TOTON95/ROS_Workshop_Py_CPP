@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import serial
 from time import sleep
 from optparse import OptionParser
@@ -6,12 +8,19 @@ from std_msgs.msg import Empty
 from ros_workshop_py_cpp.msg import Angles
 
 
+# Global ros message storage
+return2home = False
+angles = { "A" : None,
+                  "B" : None, }
+
+
 def getSerialArmCommand(angleA, angleB):
     # Generates a serial command compatable with
     # the Arduino-based arm, using angles A and B
     return "A" + str(angleA) + "B" + str(angleB) + "*"
 
 def return2homeCallback(msg):
+    print ("RTH")
     global return2home
     return2home = True
 
@@ -20,12 +29,6 @@ def anglesCallback(msg):
     global angles
     angles["A"] = msg.A
     angles["B"] = msg.B
-
-
-# Global ros message storage
-return2home = False
-angles = { "A" : None,
-           "B" : None, }
 
 def main():
     # Options
@@ -51,7 +54,6 @@ def main():
     home_B = int(options.home_angle_b)
 
     # Initialize angles to home
-    global angles
     angles["A"] = home_A
     angles["B"] = home_B
 
@@ -61,7 +63,7 @@ def main():
     rospy.Subscriber("/rth", Empty, return2homeCallback)
 
     # Set ros refresh rate
-    rate = rospy.Rate(100) # 100hz
+    rate = rospy.Rate(100) # 10hz
 
     # Set up serial connection
     ser = serial.Serial(device, port)
@@ -69,21 +71,24 @@ def main():
         ser.close()
     ser.open()
 
+    print("Before While Loop")
+
     # Communication loop
     halt = False
     while(halt != True):
         # Ensure safe angles
-        if angles["A"] < 0 or angle["A"] > 180 or \
-           angles["B"] < 0 or angle["B"] > 180:
+        if angles["A"] < 0 or angles["A"] > 180 or \
+           angles["B"] < 0 or angles["B"] > 180:
             return2home = True
 
         # Check state of callback-populated variables
+        global return2home
         if return2home == True:
-            global angles
             angles["A"] = home_A
             angles["B"] = home_B
-            return2home = False # Resent
+            return2home = False # Reset
 
+        print(angles)
         # Generate serial command using data in global angles
         sCommand = getSerialArmCommand(angles["A"], angles["B"])
 
@@ -92,14 +97,12 @@ def main():
                 (sCommand, device, port))
 
         # Send command to Arduino
-        try:
-            ser.write(sCommand)
-        except KeyboardInterrupt:
-            print("Interrupted")
-            break
+        #try:
+        ser.write(sCommand)
+        #except KeyboardInterrupt:
+        #    print("Interrupted")
+        #    break
 
-        # Refresh topics
-        rospy.spinOnce()
         # Pause
         rate.sleep()
 

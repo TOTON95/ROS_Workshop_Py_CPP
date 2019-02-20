@@ -10,6 +10,7 @@ project(ros_workshop_py_cpp)
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   roscpp
+  rospy
   sensor_msgs
   message_generation
   std_msgs

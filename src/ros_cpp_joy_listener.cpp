@@ -2,7 +2,6 @@
 #include <ros/ros.h>
 #include <std_msgs/Empty.h>
 #include <sensor_msgs/Joy.h>
-#include <geometry_msgs/Point.h>
 
 //Header with generated message
 #include <ros_workshop_py_cpp/Angles.h>
@@ -35,8 +34,8 @@ const double Y_correctionfactor = -27;
 void getJoy(const sensor_msgs::Joy::ConstPtr& button)
 {
 	btn_1 = button->buttons[0];
-	x_cmd = button->axes[1];
-	y_cmd = button->axes[0];
+	x_cmd += button->axes[1];
+	y_cmd += button->axes[0];
 }
 
 //Calculation of Inverse Kinematics 
@@ -49,13 +48,13 @@ void IK()
 	double B = (acos((pow(L2,2) - pow(L1,2) - pow(c,2)) / (-2 * L1 * c))) * (180/PI);
 	double C = (acos((pow(c,2) - pow(L2,2) - pow(L1,2)) / (-2 * L1 * L2))) * (180/PI);
 	double theta = (asin(y/c)) * (180/PI);
-	
+
 	//Setting up the message
 	ang.A = B + theta + S1_correctionfactor;
 	ang.B = C + S2_correctionfactor;
 
 	//Report to the current coordinates to USER
-	ROS_INFO("Coordinates X: %ld Y: %ld \n",ang.A, ang.B); 	
+	ROS_INFO("Coordinates X: %lf Y: %lf \n",x, y); 	
 }
 
 int main(int argc, char** argv)
@@ -76,35 +75,36 @@ int main(int argc, char** argv)
 	//Message to return to home 
 	std_msgs::Empty rth;
 
-	//Message with the coordinates for the robot
-	geometry_msgs::Point xy_cmd;
-
 	//Set the rate to 100Hz
 	ros::Rate r(100);
 
-	//If btn_1 is pressed return to HOME
-	if(btn_1)
+	while(n.ok())
 	{
-		//Send a message to the user
-		ROS_INFO("Returning to HOME");
 
-		//Send a message to RTH
-		rth_pub.publish(rth);
+		//If btn_1 is pressed return to HOME
+		if(btn_1)
+		{
+			//Send a message to the user
+			ROS_INFO("Returning to HOME");
+
+			//Send a message to RTH
+			rth_pub.publish(rth);
+		}
+
+		else
+		{
+			//Calculate Inverse Kinectmatics (IK)
+			IK();
+
+			//Send the custom message with the angles
+			ang_pub.publish(ang);
+		}
+
+
+		//Refresh the topics 
+		ros::spinOnce();
+
+		//Keep the desired rate	
+		r.sleep();
 	}
-
-	else
-	{
-		//Calculate Inverse Kinectmatics (IK)
-		IK();
-
-		//Send the custom message with the angles
-		ang_pub.publish(ang);
-	}
-
-
-	//Refresh the topics 
-	ros::spinOnce();
-
-	//Keep the desired rate	
-	r.sleep();
 }
