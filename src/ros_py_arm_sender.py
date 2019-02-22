@@ -34,7 +34,7 @@ def main():
     # Options
     parser = OptionParser()
     parser.add_option("-d", "--device", dest = "device",
-        default = "/dev/ttyACM0",
+        default = "/dev/rfcomm0",
         help = "Path to device to connect to Arduino")
     parser.add_option("-p", "--port", dest = "port",
         default = "9600",
@@ -97,11 +97,12 @@ def main():
                 (sCommand, device, port))
 
         # Send command to Arduino
-        #try:
-        ser.write(sCommand)
-        #except KeyboardInterrupt:
+        try:
+            ser.write(sCommand)
+            rospy.sleep(0.2);
+        except KeyboardInterrupt:
         #    print("Interrupted")
-        #    break
+            break
 
         # Pause
         rate.sleep()

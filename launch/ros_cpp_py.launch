@@ -1,3 +1,5 @@
 <launch>
-
+	<node name="joy" pkg="joy" type="joy_node" required="true"/>
+	<node name="joy_listener" pkg="ros_workshop_py_cpp" type="node" required="true"/>
+	<node name="arm_sender" pkg="ros_workshop_py_cpp" type="ros_py_arm_sender.py" required="true" output="screen"/>
 </launch>

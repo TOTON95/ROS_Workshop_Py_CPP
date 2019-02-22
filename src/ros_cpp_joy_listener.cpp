@@ -34,8 +34,13 @@ const double Y_correctionfactor = -27;
 void getJoy(const sensor_msgs::Joy::ConstPtr& button)
 {
 	btn_1 = button->buttons[0];
-	x_cmd += button->axes[1];
-	y_cmd += button->axes[0];
+	if(x_cmd > 90){x_cmd = 90;}
+	if(x_cmd < 0){x_cmd = 0;}
+	if(y_cmd > 90){y_cmd = 90;}
+        if(y_cmd < 0){y_cmd = 0;}
+	       	
+	x_cmd += button->axes[1]*0.75;
+	y_cmd += button->axes[0]*0.75;
 }
 
 //Calculation of Inverse Kinematics 
