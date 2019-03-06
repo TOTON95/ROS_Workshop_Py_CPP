@@ -1,3 +1,6 @@
+# [Spanish README](https://github.com/TOTON95/ROS_Workshop_Py_CPP/blob/master/README_ES.md)
+
+
 # ROS_Workshop_Py_CPP
 Workshop to teach the basics of ROS
 
