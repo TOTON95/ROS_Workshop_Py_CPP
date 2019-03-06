@@ -1,9 +1,9 @@
 # ROS_Workshop_Py_CPP
 Workshop to teach the basics of ROS
 
-##Instalation
+## Instalation
 
-###Create the workspace and move there:
+### Create the workspace and move there:
 
 `mkdir -p catkin_ws/src && cd catkin_ws/src`
 
