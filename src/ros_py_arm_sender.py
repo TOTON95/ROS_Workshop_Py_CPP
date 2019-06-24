@@ -34,7 +34,7 @@ def main():
     # Options
     parser = OptionParser()
     parser.add_option("-d", "--device", dest = "device",
-        default = "/dev/rfcomm0",
+        default = "/dev/ttyACM0",
         help = "Path to device to connect to Arduino")
     parser.add_option("-p", "--port", dest = "port",
         default = "9600",
