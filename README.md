@@ -1,9 +1,10 @@
-# ROS_Workshop_Py_CPP
-Workshop to teach the basics of ROS
+# ROS_Workshop_Py_CPP 
 
-##Instalation
+Workshop to teach the basics of ROS. [(Spanish README)](https://github.com/TOTON95/ROS_Workshop_Py_CPP/blob/master/README_ES.md)
 
-###Create the workspace and move there:
+## Instalation
+
+### Create the workspace and move there:
 
 `mkdir -p catkin_ws/src && cd catkin_ws/src`
 
